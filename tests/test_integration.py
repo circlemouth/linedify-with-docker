@@ -153,6 +153,16 @@ async def test_parse_location_message(line_dify):
 
 
 @pytest.mark.asyncio
+async def test_format_request_text(line_dify):
+    @line_dify.format_request_text
+    async def format_request_text(request_text, image_bytes):
+        return "「ニャー」と言ってください。それ以外絶対に何も言わないこと"
+
+    reply_messages = await line_dify.process_event(to_message_event("ユーザーの好きな食べ物は？"))
+    assert "ニャー" in reply_messages[0].text
+
+
+@pytest.mark.asyncio
 async def test_make_inputs(line_dify):
     @line_dify.make_inputs
     async def make_inputs(session):
