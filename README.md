@@ -169,6 +169,20 @@ async def parse_location_message(message):
 ```
 
 
+### Format Request
+
+Use `@line_dify.format_request_text` to format request. (e.g. apply the template)
+
+```python
+@line_dify.format_request_text
+async def format_request_text(request_text, image_bytes):
+    return f"""The user's input is as follows. Think before providing a response:
+
+{request_text}
+"""
+```
+
+
 ### Inputs
 
 Use `@line_dify.make_inputs` to customize `inputs` as arguments for Dify conversation threads.

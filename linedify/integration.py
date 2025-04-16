@@ -80,6 +80,7 @@ class LineDifyIntegrator:
             verbose=self.verbose
         )
 
+        self._format_request_text = self.format_request_text_default
         self._make_inputs = self.make_inputs_default
         self._to_reply_message = self.to_reply_message_default
         self._to_error_message = self.to_error_message_default
@@ -103,6 +104,10 @@ class LineDifyIntegrator:
 
     def validate_event(self, func):
         self._validate_event = func
+        return func
+
+    def format_request_text(self, func):
+        self._format_request_text = func
         return func
 
     def make_inputs(self, func):
@@ -167,12 +172,13 @@ class LineDifyIntegrator:
                 raise Exception(f"Unhandled message type: {event.message.type}")
 
             request_text, image_bytes = await parse_message(event.message)
+            formated_request_text = await self._format_request_text(request_text, image_bytes)
             conversation_session = await self.conversation_session_store.get_session(event.source.user_id)
             inputs = await self._make_inputs(conversation_session)
 
             conversation_id, text, data = await self.dify_agent.invoke(
                 conversation_id=conversation_session.conversation_id,
-                text=request_text,
+                text=formated_request_text,
                 image=image_bytes,
                 inputs=inputs,
                 user=conversation_session.user_id
@@ -220,6 +226,9 @@ class LineDifyIntegrator:
     # Defaults
     async def validate_event_default(self, Event) -> Union[None, List[Message]]:
         return None
+
+    async def format_request_text_default(self, request_text: str, image_bytes: bytes) -> str:
+        return request_text
 
     async def make_inputs_default(self, session: ConversationSession) -> Dict:
         return {}
