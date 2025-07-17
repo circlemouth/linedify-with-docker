@@ -74,6 +74,24 @@ uvicorn run:app
 
 NOTE: You have to expose the host:port to where the LINE API server can access.
 
+## 🐳 Docker
+
+以下のコマンドでコンテナイメージをビルドし、起動できます。
+
+```sh
+docker build -t linedify .
+docker run -p 18080:18080 \
+  -e LINE_CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN \
+  -e LINE_CHANNEL_SECRET=YOUR_CHANNEL_SECRET \
+  -e DIFY_API_KEY=DIFY_API_KEY \
+  -e DIFY_BASE_URL=DIFY_BASE_URL \
+  -e DIFY_USER=DIFY_USER \
+  linedify
+```
+
+デフォルトの待ち受けポートは`18080`です。変更したい場合は、`PORT`環境変数で上書きしてください。
+
+
 
 ## 🕹️ Switching Types
 
