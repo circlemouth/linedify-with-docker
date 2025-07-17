@@ -74,6 +74,18 @@ uvicorn run:app
 
 NOTE: You have to expose the host:port to where the LINE API server can access.
 
+## 🔧 Environment Variables
+
+Copy `.env.example` to `.env` and set the following variables:
+
+- `LINE_CHANNEL_ACCESS_TOKEN`
+- `LINE_CHANNEL_SECRET`
+- `DIFY_API_KEY`
+- `DIFY_BASE_URL`
+- `DIFY_USER`
+- *(optional)* `DIFY_IMAGE_PATH` - path to an image file for tests
+- *(optional)* `PORT` - server port (default `18080`)
+
 ## 🐳 Docker
 
 以下のコマンドでコンテナイメージをビルドし、起動できます。
