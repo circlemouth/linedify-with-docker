@@ -38,6 +38,7 @@ By passing the HTTP request body and signature to `line_dify.process_request`, t
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, BackgroundTasks
 from linedify import LineDify
+import os
 
 # LINE Bot - Dify Agent Integrator
 line_dify = LineDify(
@@ -47,6 +48,13 @@ line_dify = LineDify(
     dify_base_url=DIFY_BASE_URL,    # e.g. http://localhost/v1
     dify_user=DIFY_USER
 )
+
+TARGET_ROOM_ID = os.getenv("TARGET_ROOM_ID")
+
+@line_dify.validate_event
+async def validate_event(event):
+    if TARGET_ROOM_ID and event.source.type == "room" and event.source.room_id != TARGET_ROOM_ID:
+        return []
 
 # FastAPI
 @asynccontextmanager
@@ -85,6 +93,7 @@ Copy `.env.example` to `.env` and set the following variables:
 - `DIFY_USER`
 - *(optional)* `DIFY_IMAGE_PATH` - path to an image file for tests
 - *(optional)* `PORT` - server port (default `18080`)
+- *(optional)* `TARGET_ROOM_ID` - room ID the bot responds to
 
 ## 🐳 Docker
 
@@ -98,6 +107,7 @@ docker run -p 8443:8443 \
   -e DIFY_API_KEY=DIFY_API_KEY \
   -e DIFY_BASE_URL=DIFY_BASE_URL \
   -e DIFY_USER=DIFY_USER \
+  -e TARGET_ROOM_ID=YOUR_ROOM_ID \
   -e PORT=8443 \
   linedify
 ```

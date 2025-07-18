@@ -11,6 +11,14 @@ line_dify = LineDify(
     dify_user=os.environ.get("DIFY_USER", ""),
 )
 
+# Room ID to accept messages from
+TARGET_ROOM_ID = os.environ.get("TARGET_ROOM_ID")
+
+@line_dify.validate_event
+async def validate_event(event):
+    if TARGET_ROOM_ID and event.source.type == "room" and event.source.room_id != TARGET_ROOM_ID:
+        return []
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
