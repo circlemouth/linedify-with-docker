@@ -87,21 +87,48 @@ class DifyAgent:
             if self.verbose:
                 logger.debug(f"Chunk from Dify: {json.dumps(chunk, ensure_ascii=False)}")
 
-            event_type = chunk["event"]
+            event_type = chunk.get("event")
 
-            if event_type == "agent_message":
-                conversation_id = chunk["conversation_id"]
-                response_text += chunk["answer"]
+            # Text chunk. New spec uses "message", old spec uses "agent_message".
+            if event_type in ("agent_message", "message"):
+                if cid := chunk.get("conversation_id"):
+                    conversation_id = cid
+                response_text += chunk.get("answer", "")
 
+            # Tool call (old spec)
             elif event_type == "agent_thought":
                 if tool := chunk.get("tool"):
                     response_data["tool"] = tool
                 if tool_input := chunk.get("tool_input"):
                     response_data["tool_input"] = tool_input
-    
+
+            # File event in new spec
+            elif event_type == "message_file":
+                files = response_data.setdefault("message_files", [])
+                files.append({
+                    "id": chunk.get("id"),
+                    "type": chunk.get("type"),
+                    "url": chunk.get("url"),
+                    "belongs_to": chunk.get("belongs_to"),
+                })
+                if cid := chunk.get("conversation_id"):
+                    conversation_id = cid
+
+            # Message content replaced (new spec)
+            elif event_type == "message_replace":
+                response_text = chunk.get("answer", "")
+                if cid := chunk.get("conversation_id"):
+                    conversation_id = cid
+
+            # End of streaming
             elif event_type == "message_end":
-                if retriever_resources := chunk["metadata"].get("retriever_resources"):
+                metadata = chunk.get("metadata") or {}
+                if retriever_resources := metadata.get("retriever_resources"):
                     response_data["retriever_resources"] = retriever_resources
+                if cid := chunk.get("conversation_id"):
+                    conversation_id = cid
+
+            # Ignore other event types (tts_message, workflow logs, etc.)
 
         return conversation_id, response_text, response_data
 
