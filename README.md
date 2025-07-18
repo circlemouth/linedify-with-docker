@@ -99,7 +99,7 @@ Copy `.env.example` to `.env` and set the following variables:
 
 ## 🐳 Docker
 
-以下のコマンドでコンテナイメージをビルドし、起動できます。
+Use the following commands to build and run the container image.
 
 ```sh
 docker build -t linedify .
@@ -115,8 +115,8 @@ docker run -p 8443:8443 \
   linedify
 ```
 
-デフォルトの待ち受けポートは`18080`です。変更したい場合は、`PORT`環境変数で上書きしてください。
-例えば、8443番ポートで待ち受けたい場合は次のように指定します。
+The default listening port is `18080`. To change it, override the `PORT` environment variable.
+For example, to listen on port 8443, specify as follows.
 
 ```sh
 PORT=8443
