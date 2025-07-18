@@ -19,6 +19,7 @@
 
     - Built on FastAPI for high performance and easy scaling
     - Asynchronous processing for smooth operations
+    - Compatible with Dify API v1.6.0 streaming events
 
 
 ## 📦 Install
