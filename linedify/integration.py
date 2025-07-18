@@ -1,7 +1,8 @@
 import json
 from logging import getLogger, NullHandler
 from traceback import format_exc
-from typing import Dict, List, Tuple, Union
+import os
+from typing import Dict, List, Tuple, Union, Optional
 
 from linebot.v3 import WebhookParser
 from linebot.v3.messaging import (
@@ -40,8 +41,15 @@ class LineDifyIntegrator:
         dify_type: DifyType = DifyType.Agent,
         session_db_url: str = "sqlite:///sessions.db",
         session_timeout: float = 3600.0,
-        verbose: bool = False
+        verbose: Optional[bool] = None
     ) -> None:
+
+        if verbose is None:
+            env_verbose = os.getenv("LINEDIFY_VERBOSE")
+            if env_verbose is not None:
+                verbose = env_verbose.lower() in ("1", "true", "yes", "on")
+            else:
+                verbose = False
 
         self.verbose = verbose
 
