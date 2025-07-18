@@ -94,6 +94,7 @@ Copy `.env.example` to `.env` and set the following variables:
 - *(optional)* `DIFY_IMAGE_PATH` - path to an image file for tests
 - *(optional)* `PORT` - server port (default `18080`)
 - *(optional)* `TARGET_ROOM_ID` - room ID the bot responds to
+- *(optional)* `LINEDIFY_VERBOSE` - set to `true` to enable verbose logging
 
 ## 🐳 Docker
 
@@ -108,6 +109,7 @@ docker run -p 8443:8443 \
   -e DIFY_BASE_URL=DIFY_BASE_URL \
   -e DIFY_USER=DIFY_USER \
   -e TARGET_ROOM_ID=YOUR_ROOM_ID \
+  -e LINEDIFY_VERBOSE=true \
   -e PORT=8443 \
   linedify
 ```
@@ -281,7 +283,7 @@ line_dify = LineDify(
 
 ## 🐝 Debug
 
-Set `verbose=True` to see the request and response, both from/to LINE and from/to Dify.
+Set `verbose=True` or environment variable `LINEDIFY_VERBOSE=true` to see the request and response, both from/to LINE and from/to Dify.
 
 ```python
 line_dify = LineDify(
