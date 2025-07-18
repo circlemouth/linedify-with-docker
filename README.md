@@ -92,16 +92,22 @@ Copy `.env.example` to `.env` and set the following variables:
 
 ```sh
 docker build -t linedify .
-docker run -p 18080:18080 \
+docker run -p 8443:8443 \
   -e LINE_CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN \
   -e LINE_CHANNEL_SECRET=YOUR_CHANNEL_SECRET \
   -e DIFY_API_KEY=DIFY_API_KEY \
   -e DIFY_BASE_URL=DIFY_BASE_URL \
   -e DIFY_USER=DIFY_USER \
+  -e PORT=8443 \
   linedify
 ```
 
 デフォルトの待ち受けポートは`18080`です。変更したい場合は、`PORT`環境変数で上書きしてください。
+例えば、8443番ポートで待ち受けたい場合は次のように指定します。
+
+```sh
+PORT=8443
+```
 
 
 
