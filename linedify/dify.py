@@ -4,6 +4,7 @@ from logging import getLogger, NullHandler
 from typing import Dict, Tuple
 import aiohttp
 
+from .utils import normalize_line_breaks
 
 logger = getLogger(__name__)
 logger.addHandler(NullHandler())
@@ -32,9 +33,10 @@ class DifyAgent:
         self.conversation_ids = {}
 
     async def make_payloads(self, *, text: str, image_bytes: bytes = None, inputs: dict = None, user: str = None) -> Dict:
+        normalized_text = normalize_line_breaks(text)
         payloads = {
             "inputs": inputs or {},
-            "query": text,
+            "query": normalized_text,
             "response_mode": "streaming" if self.type == DifyType.Agent else "blocking",
             "user": user or self.default_user,
             "auto_generate_name": False,
@@ -130,6 +132,7 @@ class DifyAgent:
 
             # Ignore other event types (tts_message, workflow logs, etc.)
 
+        response_text = normalize_line_breaks(response_text)
         return conversation_id, response_text, response_data
 
     async def process_chatbot_response(self, response: aiohttp.ClientResponse) -> Tuple[str, str, Dict]:
@@ -139,7 +142,7 @@ class DifyAgent:
             logger.info(f"Response from Dify: {json.dumps(response_json, ensure_ascii=False)}")
 
         conversation_id = response_json["conversation_id"]
-        response_text = response_json["answer"]
+        response_text = normalize_line_breaks(response_json["answer"])
         return conversation_id, response_text, {}
 
     async def process_textgenerator_response(self, response: aiohttp.ClientResponse) -> Tuple[str, str, Dict]:
